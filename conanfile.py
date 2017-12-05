@@ -85,14 +85,17 @@ class OpusConan(ConanFile):
                     # below there are the hackish patches to enable
                     # minimum necessary SSE (which do work on used machine).
                     # TODO: if possible try to find better solution for gcc41/x86
-                    if (self.settings.arch == "x86" and self.settings.compiler.version == "4.1") or (not self.options.rtcd):
+                    is_gcc41_x86 = self.settings.arch == "x86" and \
+                        self.settings.compiler == "gcc" and \
+                        self.settings.compiler.version == "4.1"
+                    if is_gcc41_x86 or (not self.options.rtcd):
                         args.append("--disable-rtcd")
 
                     env_build = AutoToolsBuildEnvironment(self)
                     env_build.fpic = self.options.fPIC
                     env_build.configure("..", args=args)
 
-                    if self.settings.arch == "x86" and self.settings.compiler.version == "4.1":
+                    if is_gcc41_x86:
                         tools.replace_in_file(
                             "config.h".format(self.ZIP_FOLDER_NAME),
                             "/* #undef OPUS_X86_PRESUME_SSE */",
