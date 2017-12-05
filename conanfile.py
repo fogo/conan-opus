@@ -69,12 +69,41 @@ class OpusConan(ConanFile):
                         args.append("--enable-shared=no")
                         args.append("--enable-static=yes")
 
-                    if not self.options.rtcd:
+                    # Note: as usual compiling w/ gcc 4.1 is a mess. On
+                    # environment used for tests (docker image
+                    # uilianries/conangcc41) I had to disable RTCD AND
+                    # manually patch supported SSE to build x86 arch.
+                    #
+                    # It was failed configuration w/ RTCD enabled w/
+                    # message below:
+                    #
+                    # checking How to get X86 CPU Info... configure: error: no supported Get CPU Info method, please disable run-time CPU capabilities detection or intrinsics
+                    #
+                    # If RTCD disabled, it seems it was still unable to
+                    # detect correct SSE features and it ended up failing
+                    # in posterior link step. That's why a few lines
+                    # below there are the hackish patches to enable
+                    # minimum necessary SSE (which do work on used machine).
+                    # TODO: if possible try to find better solution for gcc41/x86
+                    if (self.settings.arch == "x86" and self.settings.compiler.version == "4.1") or (not self.options.rtcd):
                         args.append("--disable-rtcd")
 
                     env_build = AutoToolsBuildEnvironment(self)
                     env_build.fpic = self.options.fPIC
                     env_build.configure("..", args=args)
+
+                    if self.settings.arch == "x86" and self.settings.compiler.version == "4.1":
+                        tools.replace_in_file(
+                            "config.h".format(self.ZIP_FOLDER_NAME),
+                            "/* #undef OPUS_X86_PRESUME_SSE */",
+                            "#define OPUS_X86_PRESUME_SSE 1  // HACK!",
+                        )
+                        tools.replace_in_file(
+                            "config.h".format(self.ZIP_FOLDER_NAME),
+                            "/* #undef OPUS_X86_PRESUME_SSE2 */",
+                            "#define OPUS_X86_PRESUME_SSE2 1  // HACK!",
+                        )
+
                     env_build.make()
                 else:
                     raise Exception("TODO: windows")
