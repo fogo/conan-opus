@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/fogo/conan-opus.svg)](https://travis-ci.org/fogo/conan-opus)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Opus Interactive Audio Codec package
 
 [Conan.io](https://conan.io) package for [Opus audio codec](https://opus-codec.org/)
