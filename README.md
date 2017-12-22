@@ -6,8 +6,6 @@
 
 [Conan.io](https://conan.io) package for [Opus audio codec](https://opus-codec.org/)
 
-The packages generated with this **conanfile** can be found in [Bintray](TODO).
-
 ## Build packages
 
 Download conan client from [Conan.io](https://conan.io) and run:
