@@ -83,9 +83,13 @@ class OpusConan(ConanFile):
                     # If RTCD disabled, it seems it was still unable to
                     # detect correct SSE features and it ended up failing
                     # in posterior link step. That's why a few lines
-                    # below there are the hackish patches to enable
-                    # minimum necessary SSE (which do work on used machine).
-                    # TODO: if possible try to find better solution for gcc41/x86
+                    # below there is a hackish line to add arbitrarily the 
+                    # most basic/old SIMD flags. It seems this is necessary
+                    # because gcc4.1 only have a few of all expected SIMD
+                    # flags by Opus.
+                    #
+                    # Reference about gcc4.1 flags:
+                    # http://www.linuxcertif.com/man/1/gcc-4.1/
                     is_gcc41_x86 = self.settings.arch == "x86" and \
                         self.settings.compiler == "gcc" and \
                         self.settings.compiler.version == "4.1"
@@ -94,20 +98,9 @@ class OpusConan(ConanFile):
 
                     env_build = AutoToolsBuildEnvironment(self)
                     env_build.fpic = self.options.fPIC
-                    env_build.configure("..", args=args)
-
                     if is_gcc41_x86:
-                        tools.replace_in_file(
-                            "config.h".format(self.ZIP_FOLDER_NAME),
-                            "/* #undef OPUS_X86_PRESUME_SSE */",
-                            "#define OPUS_X86_PRESUME_SSE 1  // HACK!",
-                        )
-                        tools.replace_in_file(
-                            "config.h".format(self.ZIP_FOLDER_NAME),
-                            "/* #undef OPUS_X86_PRESUME_SSE2 */",
-                            "#define OPUS_X86_PRESUME_SSE2 1  // HACK!",
-                        )
-
+                        env_build.flags.extend(["-msse", "-msse2"])
+                    env_build.configure("..", args=args)
                     env_build.make()
                 else:
                     # TODO: no idea how to apply rtcd option for Windows
