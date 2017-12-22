@@ -33,4 +33,5 @@ install:
 
 script:
   - export CONAN_USERNAME=fogo
+  - export CONAN_REFERENCE=opus/1.2.1
   - ./.travis/run.sh
