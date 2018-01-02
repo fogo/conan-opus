@@ -32,6 +32,11 @@ install:
   - ./.travis/install.sh
 
 script:
-  - export CONAN_USERNAME=fogo
+  - export CONAN_USERNAME=fogofogo
   - export CONAN_REFERENCE=opus/1.2.1
+  - export CONAN_UPLOAD=https://api.bintray.com/conan/fogofogo/opus
+  - export CONAN_REMOTES=https://api.bintray.com/conan/fogofogo/opus
+  - export CONAN_STABLE_BRANCH_PATTERN="stable/.+"
+  - export CONAN_UPLOAD_ONLY_WHEN_STABLE=1
   - ./.travis/run.sh
+

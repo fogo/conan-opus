@@ -18,5 +18,11 @@ install:
   - conan user # It creates the conan data directory
 
 test_script:
-  - set CONAN_USERNAME=fogo
+  - set CONAN_USERNAME=fogofogo
+  - set CONAN_REFERENCE=opus/1.2.1
+  - set CONAN_UPLOAD=https://api.bintray.com/conan/fogofogo/opus
+  - set CONAN_REMOTES=https://api.bintray.com/conan/fogofogo/opus
+  - set CONAN_STABLE_BRANCH_PATTERN=stable/.+
+  - set CONAN_UPLOAD_ONLY_WHEN_STABLE=1
   - python build.py
+
